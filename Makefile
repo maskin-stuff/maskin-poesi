@@ -1,0 +1,16 @@
+CFLAGS=-Wall -Wextra -Wpedantic -g -O0
+
+SRC=$(wildcard *.c)
+OBJ=$(SRC:%.c=%.o)
+
+poem: $(OBJ)
+	gcc -o $@ $^
+
+%.o: %.c
+	gcc $(CFLAGS) -o $@ -c $<
+
+clean:
+	rm $(OBJ) poem
+
+.PHONY:
+	clean
