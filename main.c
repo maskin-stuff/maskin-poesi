@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 
 	if (argc < 2)
 	{
-		fprintf(stderr, "usage: %s <input>\n", argv[0]);
+		fprintf(stderr, "usage: %s <input> [seed]\n", argv[0]);
 		exit(1);
 	}
 
@@ -66,7 +66,13 @@ int main(int argc, char **argv)
 	// ast_debug_dump(ast, stdout);
 	// printf("\n");
 
-	srand(time(NULL));
+	int seed = 0;
+	if (argc > 2)
+	{
+		seed = atoi(argv[2]);
+	}
+
+	srand(seed);
 
 	if (gen(stdout, ast))
 	{

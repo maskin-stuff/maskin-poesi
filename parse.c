@@ -57,7 +57,8 @@ static enum token_tag take(void)
 	if (s_cursor == s_len)
 		return TT_DONE;
 
-	while (s_src[s_cursor] == ' ' || s_src[s_cursor] == '\n')
+	while (s_src[s_cursor] == ' ' || s_src[s_cursor] == '\n'
+	       || s_src[s_cursor] == '\t')
 	{
 		++s_cursor;
 		if (s_cursor == s_len)
@@ -428,36 +429,43 @@ void ast_debug_dump(struct ast *ast, FILE *f)
 	fprintf(f, ")");
 }
 
-void get_line_info(const char *src, size_t len, size_t loc, size_t *lineno,
-                   size_t *begin, size_t *end, size_t *offset)
+void parse_print_error(FILE *f)
 {
-	size_t pos;
+	size_t pos, lineno, begin, end, offset;
 
-	*lineno = 1;
-	*begin = 0;
-	*end = 0;
-	*offset = 0;
+	lineno = 1;
+	begin = 0;
+	end = 0;
+	offset = 0;
 	pos = 0;
 
-	for (; pos < loc && pos < len; pos++)
+	for (; pos < s_error_location && pos < s_len; pos++)
 	{
-		if (src[pos] == '\n')
+		if (s_src[pos] == '\n')
 		{
 			++lineno;
-			*begin = pos + 1;
+			begin = pos + 1;
 		}
 	}
 
-	for (; pos < len; pos++)
+	for (; pos < s_len; pos++)
 	{
-		if (src[pos] == '\n')
+		if (s_src[pos] == '\n')
 		{
 			break;
 		}
 	}
 
-	*end = pos;
-	*offset = loc - *begin;
+	end = pos;
+	offset = s_error_location - begin;
+
+	fprintf(f, "\x1b[31merror\x1b[0m (line %zu): %s\n",
+	       lineno, s_error_string);
+
+	fprintf(f, "%.*s\n", (int)(end - begin), &s_src[begin]);
+	while (offset--)
+		fputc(' ', f);
+	fprintf(f, "^\n");
 }
 
 size_t ast_count_choices(struct ast *ast)

@@ -29,8 +29,7 @@ void ast_destroy(struct ast *ast);
 /* Get description and location of error on failed parse */
 const char *parse_get_error_string(void);
 size_t parse_get_error_location(void);
-void get_line_info(const char *src, size_t len, size_t loc, size_t *lineno,
-                   size_t *begin, size_t *end, size_t *offset);
+void parse_print_error(FILE *f);
 
 void ast_debug_dump(struct ast *ast, FILE *f);
 
