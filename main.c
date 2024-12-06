@@ -55,16 +55,7 @@ int main(int argc, char **argv)
 
 	if (!ast)
 	{
-		fprintf(stderr, "error: %s\n", parse_get_error_string());
-
-		size_t loc, lineno, begin, end, offset;
-		loc = parse_get_error_location();
-		get_line_info(src, len, loc, &lineno,
-		              &begin, &end, &offset);
-
-		fprintf(stderr, "%.*s\n", (int) (end - begin), &src[loc]);
-		while (offset-- > 0) fputc(' ', stderr);
-		fprintf(stderr, "^ \n");
+		parse_print_error(stderr);
 		exit(1);
 	}
 
