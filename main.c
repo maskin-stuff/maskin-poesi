@@ -8,6 +8,7 @@ char *read_file(const char *path, size_t *len)
 {
 	FILE *f;
 	char *buf;
+	size_t cursor;
 
 	f = fopen(path, "r");
 	if (!f)
@@ -22,7 +23,11 @@ char *read_file(const char *path, size_t *len)
 
 	buf = malloc(*len);
 
-	(void) fread(buf, 1, *len, f);
+	cursor = 0;
+	while (cursor < *len)
+	{
+		cursor += fread(buf + cursor, 1, *len - cursor, f);
+	}
 	fclose(f);
 
 	return buf;
