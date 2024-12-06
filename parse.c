@@ -18,6 +18,7 @@ enum token_tag
 
 static const char *s_error_string;
 static size_t s_error_location;
+static size_t s_token_location;
 static const char *s_src;
 static size_t s_len;
 static size_t s_cursor;
@@ -55,7 +56,10 @@ static enum token_tag take(void)
 	}
 
 	if (s_cursor == s_len)
+	{
+		s_token_location = s_cursor - 1;
 		return TT_DONE;
+	}
 
 	while (s_src[s_cursor] == ' ' || s_src[s_cursor] == '\n'
 	       || s_src[s_cursor] == '\t')
@@ -68,18 +72,23 @@ static enum token_tag take(void)
 	switch (s_src[s_cursor])
 	{
 	case '<':
+		s_token_location = s_cursor;
 		++s_cursor;
 		return TT_LANG;
 	case '>':
+		s_token_location = s_cursor;
 		++s_cursor;
 		return TT_RANG;
 	case '=':
+		s_token_location = s_cursor;
 		++s_cursor;
 		return TT_EQL;
 	case ';':
+		s_token_location = s_cursor;
 		++s_cursor;
 		return TT_SEMI;
 	case '|':
+		s_token_location = s_cursor;
 		++s_cursor;
 		return TT_PIPE;
 	default:
@@ -87,6 +96,7 @@ static enum token_tag take(void)
 	}
 
 	start = s_cursor;
+	s_token_location = start;
 
 	char c = s_src[s_cursor];
 	while (isalpha(s_src[s_cursor]) || c == ',' || c == '?'
@@ -181,7 +191,7 @@ static struct ast *parse_decl(void)
 		break;
 	default:
 		ast_destroy(lhs);
-		set_error("Unexpected token or EOF, expected =", s_cursor);
+		set_error("Unexpected token or EOF, expected =", s_token_location);
 		return NULL;
 	}
 
@@ -203,7 +213,7 @@ static struct ast *parse_decl(void)
 		(void) take();
 		break;
 	default:
-		set_error("Unexpected token or EOF, expected ;", s_cursor);
+		set_error("Unexpected token or EOF, expected ;", s_token_location);
 		ast_destroy(lhs);
 		ast_destroy(rhs);
 		return NULL;
@@ -230,7 +240,7 @@ static struct ast *parse_constr(void)
 	}
 	if (tt != TT_LANG)
 	{
-		set_error("Unexpected token or EOF, expected <", s_cursor);
+		set_error("Unexpected token or EOF, expected <", s_token_location);
 		return NULL;
 	}
 
@@ -241,7 +251,7 @@ static struct ast *parse_constr(void)
 	}
 	if (tt != TT_WORD)
 	{
-		set_error("Unexpected token or EOF, expected word", s_cursor);
+		set_error("Unexpected token or EOF, expected word", s_token_location);
 		return NULL;
 	}
 
@@ -254,7 +264,7 @@ static struct ast *parse_constr(void)
 	}
 	if (tt != TT_RANG)
 	{
-		set_error("Unexpected token or EOF, expected >", s_cursor);
+		set_error("Unexpected token or EOF, expected >", s_token_location);
 		return NULL;
 	}
 
@@ -304,7 +314,7 @@ static struct ast *parse_choice(void)
 		break;
 	}
 
-	set_error("Unexpected token or EOF, expected ; or |", s_cursor);
+	set_error("Unexpected token or EOF, expected ; or |", s_token_location);
 	return NULL;
 }
 
@@ -333,7 +343,7 @@ static struct ast *parse_list(void)
 	case TT_ERROR:
 		return NULL;
 	default:
-		set_error("Unexpected token or EOF, expected word or construct", s_cursor);
+		set_error("Unexpected token or EOF, expected word or construct", s_token_location);
 		return NULL;
 	}
 
