@@ -62,8 +62,16 @@ static enum token_tag take(void)
 	}
 
 	while (s_src[s_cursor] == ' ' || s_src[s_cursor] == '\n'
-	       || s_src[s_cursor] == '\t')
+	       || s_src[s_cursor] == '\t' || s_src[s_cursor] == '%')
 	{
+		if (s_src[s_cursor] == '%') {
+			while (s_src[s_cursor] != '\n' && s_cursor != s_len) {
+				++s_cursor;
+				if (s_cursor == s_len)
+					return TT_DONE;
+			}
+			continue;
+		}
 		++s_cursor;
 		if (s_cursor == s_len)
 			return TT_DONE;
