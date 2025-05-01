@@ -67,6 +67,10 @@ int main(int argc, char **argv)
 	{
 		seed = atoi(argv[2]);
 	}
+	else
+	{
+		seed = time(NULL);
+	}
 
 	srand(seed);
 
