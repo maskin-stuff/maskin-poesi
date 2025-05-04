@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Wextra -Wpedantic
+CFLAGS=-Wall -Wextra -Wpedantic -g -O0 -Wno-cpp
 
 SRC=$(wildcard *.c)
 OBJ=$(SRC:%.c=%.o)

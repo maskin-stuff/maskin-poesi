@@ -20,6 +20,7 @@ struct ast
 	enum ast_tag tag;
 	struct ast *lhs;
 	struct ast *rhs;
+	int freq;
 	char *str;
 };
 

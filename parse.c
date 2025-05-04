@@ -107,9 +107,9 @@ static enum token_tag take(void)
 	s_token_location = start;
 
 	char c = s_src[s_cursor];
-	while (isalpha(s_src[s_cursor]) || c == ',' || c == '?'
+	while (isalpha(s_src[s_cursor]) || c == ',' || c == '?' || c == '!'
 	       || c == '.' || c == '+' || isdigit(s_src[s_cursor])
-	       || c == '-' || c == '\\')
+	       || c == '-' || c == '\\' || c == ':')
 	{
 		++s_cursor;
 		if (s_cursor == s_len)

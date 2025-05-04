@@ -17,14 +17,20 @@ static int gen_internal(FILE *f, struct ast *ast)
 	{
 	case AT_SPEC:
 	case AT_CHOICE:
-		depth = ast_count_choices(ast);
-		choice = rand() % depth;
-		sub = ast_get_rhs_depth(ast, choice);
-		if (sub->tag == AT_CHOICE)
+		for (;;)
 		{
-			sub = sub->lhs;
+			depth = ast_count_choices(ast);
+			choice = rand() % depth;
+			sub = ast_get_rhs_depth(ast, choice);
+			if (sub->tag == AT_CHOICE)
+			{
+				sub = sub->lhs;
+			}
+			if (rand() % (sub->freq + 1))
+				continue;
+			sub->freq++;
+			return gen_internal(f, sub);
 		}
-		return gen_internal(f, sub);
 	case AT_WORD:
 		if (strcmp(ast->str, "\\") == 0)
 		{
