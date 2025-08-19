@@ -43,6 +43,11 @@ static enum token_tag peek(void)
 	return s_peek;
 }
 
+static int iswordchar(int c)
+{
+	return isalpha(c) || strchr("åäö", c);
+}
+
 static enum token_tag take(void)
 {
 	size_t start;
@@ -107,7 +112,7 @@ static enum token_tag take(void)
 	s_token_location = start;
 
 	char c = s_src[s_cursor];
-	while (isalpha(s_src[s_cursor]) || c == ',' || c == '?' || c == '!'
+	while (iswordchar(s_src[s_cursor]) || c == ',' || c == '?' || c == '!'
 	       || c == '.' || c == '+' || isdigit(s_src[s_cursor])
 	       || c == '-' || c == '\\' || c == ':')
 	{
