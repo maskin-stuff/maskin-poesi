@@ -1,4 +1,4 @@
-name: Windows Build
+name: macOS Build
 
 on:
   push:
@@ -6,22 +6,19 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Visual Studio environment
-        uses: ilammy/msvc-dev-cmd@v1
-
       - name: Build
         run: |
-          cl *.c /Fe:poem.exe
+          clang *.c -o poem
 
-      - name: Upload build artifact
+      - name: Upload compiled binary
         uses: actions/upload-artifact@v4
         with:
           name: poem
-          path: poem.exe
+          path: poem
 
