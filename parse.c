@@ -4,6 +4,10 @@
 #include <assert.h>
 #include "parse.h"
 
+#ifdef _WIN32
+char *strndup(const char *str, size_t n);
+#endif
+
 enum token_tag
 {
 	TT_DONE = 0,
